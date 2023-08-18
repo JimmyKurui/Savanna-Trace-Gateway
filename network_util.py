@@ -5,8 +5,8 @@ import paho.mqtt.client as mqtt
 # MQTT broker
 id = '1'
 client_name = 'ST_device' + id
-broker_host = 'broker.emqx.io'
-broker_port = 1883
+broker_host = 'wss://mqtt-dashboard.com/mqtt' #'broker.emqx.io' 
+broker_port = 8884 # 1883
 # Topics 
 title = f'Network notification for {client_name}'
 ip_topic = f'/stats/notifications/{client_name}/network'
@@ -44,6 +44,7 @@ if __name__ == '__main__':
         ip_wifi = socket.gethostbyname(socket.gethostname())
         # Topic message to publish in JSON format
         ip_message = {
+            'topic': ip_topic,
             'timestamp': datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
             'ipWifi': ip_wifi
         } 
@@ -55,7 +56,9 @@ if __name__ == '__main__':
                 time.sleep(reconnect_delay)
                 retries = retries + 1
                 client.reconnect()
+                print("Reconnected!")
             except:
                 print(f'Reconnection attempt {retries} failed')
+        time.sleep(1)
     
 
