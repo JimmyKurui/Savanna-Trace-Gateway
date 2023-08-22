@@ -5,8 +5,8 @@ import paho.mqtt.client as mqtt
 # MQTT broker
 id = '1'
 client_name = 'ST_device' + id
-broker_host = 'wss://mqtt-dashboard.com/mqtt' #'broker.emqx.io' 
-broker_port = 8884 # 1883
+broker_host = 'mqtt.eclipseprojects.io'
+broker_port =  80 # 1883 
 # Topics 
 title = f'Network notification for {client_name}'
 ip_topic = f'/stats/notifications/{client_name}/network'
@@ -32,7 +32,7 @@ def on_disconnect(client, userdata, rc):
     connected = False
     
 # Set up MQTT client and connect to broker
-client = mqtt.Client(client_name)
+client = mqtt.Client(client_name, transport="websockets")
 client.on_connect = on_connect
 client.on_disconnect = on_disconnect
 client.connect(broker_host, broker_port)
@@ -53,12 +53,13 @@ if __name__ == '__main__':
         # Retry segment
         if not connected:
             try:
+                print("Reconnecting...")
                 time.sleep(reconnect_delay)
                 retries = retries + 1
                 client.reconnect()
-                print("Reconnected!")
+                connected =True
             except:
-                print(f'Reconnection attempt {retries} failed')
+                print(f'Reconnection attempt failed')
         time.sleep(1)
     
 
